@@ -45,8 +45,8 @@ export default function CosplayCard({ cosplay, onEdit, onDelete, onItemToggle })
     <View style={[styles.card, { backgroundColor: theme.surfaceLight, ...shadows.lg, minHeight: 200 }]}>
       {/* Horizontal Row Layout: Image (left) and All Content (right) */}
       <View style={{ flexDirection: "row", flex: 1 }}>
-        {/* Left: Image - Full height of card, prominent width */}
-        <View style={[styles.imageContainer, { width: 180, flex: 1, margin: 0 }]}>
+        {/* Left: Image - Fixed size like in Add/Edit screens */}
+        <View style={[styles.imageContainer, { width: 200, height: 280, flexShrink: 0, margin: 0 }]}>
           <Image
             source={imageSource}
             style={styles.image}
@@ -74,7 +74,7 @@ export default function CosplayCard({ cosplay, onEdit, onDelete, onItemToggle })
         </View>
 
         {/* Right: All Content Section */}
-        <View style={{ flex: 2, padding: spacing[4], justifyContent: "space-between" }}>
+        <View style={{ flex: 2, padding: spacing[4] }}>
           {/* Top Content: Title, Meta, Cost */}
           <View>
             {/* Title */}
@@ -90,10 +90,10 @@ export default function CosplayCard({ cosplay, onEdit, onDelete, onItemToggle })
               {cosplay.characterName}
             </Text>
 
-            {/* Quick Info Grid */}
-            <View style={styles.metaGrid}>
+            {/* Quick Info: Deadline & Location Stacked Vertically */}
+            <View style={{ marginBottom: spacing[3] }}>
               {cosplay.deadline && (
-                <View style={styles.metaItem}>
+                <View style={{ marginBottom: spacing[2] }}>
                   <Text
                     style={{
                       fontSize: fontSize.xs,
@@ -118,7 +118,7 @@ export default function CosplayCard({ cosplay, onEdit, onDelete, onItemToggle })
               )}
 
               {cosplay.location && (
-                <View style={styles.metaItem}>
+                <View>
                   <Text
                     style={{
                       fontSize: fontSize.xs,
@@ -144,193 +144,190 @@ export default function CosplayCard({ cosplay, onEdit, onDelete, onItemToggle })
               )}
             </View>
 
-            {/* Cost Summary */}
+            {/* Cost Summary: Total & Remaining Stacked Vertically */}
             <View
               style={[
-                styles.costSummary,
                 {
                   backgroundColor: theme.primaryLighter,
                   borderRadius: borderRadius.lg,
-                  paddingVertical: spacing[2],
+                  paddingVertical: spacing[3],
                   paddingHorizontal: spacing[3],
-                  marginTop: spacing[3],
+                  marginBottom: spacing[3],
                 },
               ]}
             >
-              <View style={styles.costRow}>
-                <View>
-                  <Text
-                    style={{
-                      fontSize: fontSize.xs,
-                      fontWeight: fontWeight.semibold,
-                      color: theme.primaryDark,
-                      textTransform: "uppercase",
-                      marginBottom: spacing[1],
-                    }}
-                  >
-                    Total
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: fontSize.base,
-                      fontWeight: fontWeight.bold,
-                      color: theme.primary,
-                    }}
-                  >
-                    ₱{totalCost.toFixed(2)}
-                  </Text>
-                </View>
-                <View style={styles.divider} />
-                <View>
-                  <Text
-                    style={{
-                      fontSize: fontSize.xs,
-                      fontWeight: fontWeight.semibold,
-                      color: theme.primaryDark,
-                      textTransform: "uppercase",
-                      marginBottom: spacing[1],
-                    }}
-                  >
-                    Remaining
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: fontSize.base,
-                      fontWeight: fontWeight.bold,
-                      color: remainingCost > 0 ? theme.warning : theme.success,
-                    }}
-                  >
-                    ₱{remainingCost.toFixed(2)}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Items Checklist */}
-            {items.length > 0 && (
-              <View style={{ marginTop: spacing[3] }}>
+              <View style={{ marginBottom: spacing[2] }}>
                 <Text
                   style={{
-                    fontSize: fontSize.sm,
-                    fontWeight: fontWeight.bold,
-                    color: theme.textSecondary,
+                    fontSize: fontSize.xs,
+                    fontWeight: fontWeight.semibold,
+                    color: theme.primaryDark,
                     textTransform: "uppercase",
-                    marginBottom: spacing[2],
-                    letterSpacing: 0.5,
+                    marginBottom: spacing[1],
                   }}
                 >
-                  Shopping List
+                  Total
                 </Text>
+                <Text
+                  style={{
+                    fontSize: fontSize.base,
+                    fontWeight: fontWeight.bold,
+                    color: theme.primary,
+                  }}
+                >
+                  ₱{totalCost.toFixed(2)}
+                </Text>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    fontSize: fontSize.xs,
+                    fontWeight: fontWeight.semibold,
+                    color: theme.primaryDark,
+                    textTransform: "uppercase",
+                    marginBottom: spacing[1],
+                  }}
+                >
+                  Remaining
+                </Text>
+                <Text
+                  style={{
+                    fontSize: fontSize.base,
+                    fontWeight: fontWeight.bold,
+                    color: remainingCost > 0 ? theme.warning : theme.success,
+                  }}
+                >
+                  ₱{remainingCost.toFixed(2)}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
 
-                <View style={[{ borderRadius: borderRadius.md }, styles.itemsList]}>
-                  {items.slice(0, 3).map((item, index) => { // Show only first 3 items
-                    const isToggling = togglingIds.includes(item.id);
-                    return (
-                      <TouchableOpacity
-                        key={item.id}
-                        style={[
-                          {
-                            flexDirection: "row",
-                            alignItems: "center",
-                            paddingVertical: spacing[2],
-                            paddingHorizontal: spacing[2],
-                            borderBottomWidth: index < Math.min(items.length - 1, 2) ? 1 : 0,
-                            borderBottomColor: theme.border,
-                            backgroundColor: item.isChecked ? theme.successLight : "transparent",
-                          },
-                        ]}
-                        onPress={() => toggleItem(item.id)}
-                        activeOpacity={0.6}
-                      >
-                        {/* Checkbox */}
-                        <View
-                          style={[
-                            {
-                              width: 20,
-                              height: 20,
-                              borderRadius: borderRadius.sm,
-                              borderWidth: 2,
-                              borderColor: item.isChecked ? theme.success : theme.border,
-                              backgroundColor: item.isChecked ? theme.success : "transparent",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              marginRight: spacing[2],
-                            },
-                          ]}
-                        >
-                          {isToggling ? (
-                            <ActivityIndicator size="small" color={theme.textInvert} />
-                          ) : item.isChecked ? (
-                            <Text style={{ color: theme.textInvert, fontSize: 12, fontWeight: fontWeight.bold }}>✓</Text>
-                          ) : null}
-                        </View>
+      {/* Shopping List - Full Width Below */}
+      {items.length > 0 && (
+        <View style={{ padding: spacing[4], paddingTop: 0 }}>
+          <Text
+            style={{
+              fontSize: fontSize.sm,
+              fontWeight: fontWeight.bold,
+              color: theme.textSecondary,
+              textTransform: "uppercase",
+              marginBottom: spacing[2],
+              letterSpacing: 0.5,
+            }}
+          >
+            Shopping List
+          </Text>
 
-                        {/* Item details */}
-                        <View style={{ flex: 1 }}>
-                          <Text
-                            style={{
-                              fontSize: fontSize.sm,
-                              fontWeight: fontWeight.medium,
-                              color: item.isChecked ? theme.textSecondary : theme.text,
-                              textDecorationLine: item.isChecked ? "line-through" : "none",
-                            }}
-                            numberOfLines={1}
-                          >
-                            {item.name}
-                          </Text>
-                        </View>
+          <View style={[{ borderRadius: borderRadius.md }, styles.itemsList]}>
+            {items.slice(0, 3).map((item, index) => { // Show only first 3 items
+              const isToggling = togglingIds.includes(item.id);
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    {
+                      flexDirection: "row",
+                      alignItems: "center",
+                      paddingVertical: spacing[2],
+                      paddingHorizontal: spacing[2],
+                      borderBottomWidth: index < Math.min(items.length - 1, 2) ? 1 : 0,
+                      borderBottomColor: theme.border,
+                      backgroundColor: item.isChecked ? theme.successLight : "transparent",
+                    },
+                  ]}
+                  onPress={() => toggleItem(item.id)}
+                  activeOpacity={0.6}
+                >
+                  {/* Checkbox */}
+                  <View
+                    style={[
+                      {
+                        width: 20,
+                        height: 20,
+                        borderRadius: borderRadius.sm,
+                        borderWidth: 2,
+                        borderColor: item.isChecked ? theme.success : theme.border,
+                        backgroundColor: item.isChecked ? theme.success : "transparent",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginRight: spacing[2],
+                      },
+                    ]}
+                  >
+                    {isToggling ? (
+                      <ActivityIndicator size="small" color={theme.textInvert} />
+                    ) : item.isChecked ? (
+                      <Text style={{ color: theme.textInvert, fontSize: 12, fontWeight: fontWeight.bold }}>✓</Text>
+                    ) : null}
+                  </View>
 
-                        {/* Cost */}
-                        <Text
-                          style={{
-                            fontSize: fontSize.sm,
-                            fontWeight: fontWeight.bold,
-                            color: item.isChecked ? theme.textSecondary : theme.primary,
-                          }}
-                        >
-                          ₱{parseFloat(item.cost || 0).toFixed(2)}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                  {items.length > 3 && (
-                    <View style={{ paddingVertical: spacing[1], paddingHorizontal: spacing[2] }}>
-                      <Text style={{ fontSize: fontSize.xs, color: theme.textTertiary }}>
-                        +{items.length - 3} more items...
-                      </Text>
-                    </View>
-                  )}
-                </View>
+                  {/* Item details */}
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        fontSize: fontSize.sm,
+                        fontWeight: fontWeight.medium,
+                        color: item.isChecked ? theme.textSecondary : theme.text,
+                        textDecorationLine: item.isChecked ? "line-through" : "none",
+                      }}
+                      numberOfLines={1}
+                    >
+                      {item.name}
+                    </Text>
+                  </View>
+
+                  {/* Cost */}
+                  <Text
+                    style={{
+                      fontSize: fontSize.sm,
+                      fontWeight: fontWeight.bold,
+                      color: item.isChecked ? theme.textSecondary : theme.primary,
+                    }}
+                  >
+                    ₱{parseFloat(item.cost || 0).toFixed(2)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+            {items.length > 3 && (
+              <View style={{ paddingVertical: spacing[1], paddingHorizontal: spacing[2] }}>
+                <Text style={{ fontSize: fontSize.xs, color: theme.textTertiary }}>
+                  +{items.length - 3} more items...
+                </Text>
               </View>
             )}
           </View>
-
-          {/* Bottom: Action Buttons */}
-          <View
-            style={{
-              flexDirection: "row",
-              gap: spacing[2],
-              marginTop: spacing[3],
-            }}
-          >
-            <Button
-              title="Edit"
-              variant="outline"
-              onPress={onEdit}
-              size="sm"
-              fullWidth={true}
-              style={{ flex: 1 }}
-            />
-            <Button
-              title="Delete"
-              variant="danger"
-              onPress={onDelete}
-              size="sm"
-              fullWidth={true}
-              style={{ flex: 1 }}
-            />
-          </View>
         </View>
+      )}
+
+      {/* Bottom: Action Buttons */}
+      <View
+        style={{
+          flexDirection: "row",
+          gap: spacing[2],
+          padding: spacing[4],
+          paddingTop: 0,
+        }}
+      >
+        <Button
+          title="Edit"
+          variant="outline"
+          onPress={onEdit}
+          size="sm"
+          fullWidth={true}
+          style={{ flex: 1 }}
+        />
+        <Button
+          title="Delete"
+          variant="danger"
+          onPress={onDelete}
+          size="sm"
+          fullWidth={true}
+          style={{ flex: 1 }}
+        />
       </View>
     </View>
   );
@@ -377,26 +374,7 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 8,
   },
-  metaGrid: {
-    flexDirection: "row",
-    gap: 16,
-  },
-  metaItem: {
-    flex: 1,
-  },
-  costSummary: {
-    justifyContent: "center",
-  },
-  costRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  divider: {
-    width: 1,
-    height: 50,
-    backgroundColor: "rgba(0,0,0,0.1)",
-  },
+
   itemsList: {
     backgroundColor: "transparent",
     borderWidth: 1,
